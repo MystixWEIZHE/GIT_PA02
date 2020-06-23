@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -14,6 +16,11 @@ public class Player : MonoBehaviour
     private Animator thisAnimator = null;
 
     private float moveSpeed = 0.05f;
+    public Text txt_Lives;
+    public int lives = 3;
+    public GameObject Boom;
+    public static int Score;
+    public Text txt_score;
 
     void Start()
     {
@@ -49,9 +56,28 @@ public class Player : MonoBehaviour
             else
                 MoveDirection.y += JumpValue * Time.deltaTime;
         }
-
+        
         thisController.Move(MoveDirection);
         transform.position = new Vector3(Mathf.Clamp(transform.position.x, -1.5f, 1.5f), transform.position.y, transform.position.z);
+        txt_score.text = "Score:" + Score;
+
+        if(lives == 0)
+        {
+           
+            HUD.HUDManager.GameOver();
+            
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Obstacle")
+        {
+           
+            Instantiate(Boom, transform.position, transform.rotation);
+            GameManager.Lives--;
+            txt_Lives.text = "Lives:";
+            HUD.HUDManager.UpdateLives();
+        }
     }
 
 }
